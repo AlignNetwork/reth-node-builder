@@ -84,10 +84,10 @@ This setup should work because the script will find the bin named `exex`, anothe
 
 If the script ran successfully you should be able to run:
 
-- `systemctl start reth-mainnet` - Start Reth Client
-- `systemctl start lighthouse-mainnet` - Start Lighthouse Client
-- `journalctl -u reth-mainnet -f` - Logs of Reth
-- `journalctl -u lighthouse-mainnet -f`- Logs of Lighthouse
+- `systemctl start reth-<repo_name>-<network>` - Start Reth Client
+- `systemctl start lighthouse-<repo_name>-<network>` - Start Lighthouse Client
+- `journalctl -u reth-<repo_name>-<network> -f` - Logs of Reth
+- `journalctl -u lighthouse-<repo_name>-<network> -f`- Logs of Lighthouse
 
 ### Directory Structure:
 
