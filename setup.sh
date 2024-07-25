@@ -8,7 +8,7 @@ VERBOSE=0
 NETWORK_NAME=""
 INSTALL_FULL_NODE=false
 USE_MOONSNAP=false
-
+REPO_NAME=""
 
 show_intro() {
     cat << EOF
@@ -57,7 +57,7 @@ setup_services() {
   fi
 
   # Create Reth service file
-  cat > "$services_dir/reth.service" << EOF
+  cat > "$services_dir/reth-${REPO_NAME}-${NETWORK_NAME}.service" << EOF
             [Unit]
             Description=Reth Ethereum Client
             After=network.target
@@ -75,7 +75,7 @@ setup_services() {
 EOF
 
     # Create Lighthouse service file
-  cat > "$services_dir/lighthouse.service" << EOF
+  cat > "$services_dir/lighthouse-${REPO_NAME}-${NETWORK_NAME}.service" << EOF
           [Unit]
           Description=Lighthouse Ethereum Client
           After=network.target
@@ -90,11 +90,9 @@ EOF
           [Install]
           WantedBy=multi-user.target
 EOF
-  touch "$services_dir/reth.service"
-  touch "$services_dir/lighthouse.service"
   # Setup services
-  setup_service "reth"
-  setup_service "lighthouse"
+  setup_service "reth-$REPO_NAME-$NETWORK_NAME"
+  setup_service "lighthouse-$REPO_NAME-$NETWORK_NAME"
 
   if [ $? -eq 0 ]; then
       systemctl daemon-reload
@@ -145,12 +143,12 @@ install_rust() {
 # Install Reth
 install_reth() {
   echo "Installing dependencies..."
-  run_command apt-get update
-  run_command apt-get install -y libclang-dev pkg-config build-essential
+  apt-get update  > /dev/null 2>&1
+  apt-get install -y libclang-dev pkg-config build-essential > /dev/null 2>&1
   echo "Dependencies installed."
     # Default Paradigm Reth repo
     cd /root/reth-node-builder/node-sources
-  if [ "$RETH_SOURCE" = "https://github.com/paradigmxyz/reth" ]; then
+  if [ "$RETH_SOURCE" = "https://github.com/paradigmxyz/reth" ] || [ "$REPO_NAME" = "reth" ]; then
     if command_exists reth; then
       echo "✅ Reth already installed."
     else
@@ -164,12 +162,14 @@ install_reth() {
       fi
     fi
   elif [[ "$RETH_SOURCE" == http* ]]; then
+    REPO_NAME=$(basename -s .git "$RETH_SOURCE")
     echo "Installing Modified Reth from $RETH_SOURCE"
     # GitHub ExEx repo
     if [ -d "reth" ]; then
-      echo "✅ Reth folder already exists. Updating..."
-      cd reth
-      git pull
+      echo "✅ Reth folder already exists."
+    fi
+    if [ -d "$REPO_NAME" ]; then
+      echo "✅ $REPO_NAME folder already exists."
     else
       cd /root/reth-node-builder/node-sources
       REPO_NAME=$(basename -s .git "$RETH_SOURCE")
@@ -177,7 +177,7 @@ install_reth() {
       cd "$REPO_NAME"
     fi
   else
-    echo "Installing Modified Reth from $RETH_SOURCE"
+    echo "Installing Modified Reth from local $RETH_SOURCE"
     # Local ExEx folder
     cd /root/reth-node-builder/node-sources
     if [ -d "$RETH_SOURCE" ]; then
@@ -222,8 +222,7 @@ generate_jwt() {
 setup_service() {
     local service_name=$1
     local service_file="/root/reth-node-builder/services/${NETWORK_NAME}/${service_name}.service"
-    
-    local service_path="/etc/systemd/system/${service_name}-${NETWORK_NAME}.service"
+    local service_path="/etc/systemd/system/${service_name}.service"
 
     echo "🔧 Setting up ${service_name} service... for ${NETWORK_NAME^^} network"
     if [ -f "$service_file" ]; then
@@ -392,7 +391,24 @@ fi
 if [ -z "$RETH_SOURCE" ]; then
     # Default to Paradigm Reth repo if no source is specified
     RETH_SOURCE="https://github.com/paradigmxyz/reth"
-  fi
+    REPO_NAME="reth"
+elif [ "$RETH_SOURCE" = "https://github.com/paradigmxyz/reth" ]; then
+    REPO_NAME="reth"
+elif [[ "$RETH_SOURCE" == http* ]]; then
+    REPO_NAME=$(basename -s .git "$RETH_SOURCE")
+    echo " Detected Modified (ExEx) Reth  source from github"
+else
+    echo "Installing Modified Reth from local $RETH_SOURCE"
+    # Local ExEx folder
+    cd /root/reth-node-builder/node-sources
+    if [ -d "$RETH_SOURCE" ]; then
+      cd "$RETH_SOURCE"
+    else
+      echo "ℹ️ Folder '$RETH_SOURCE' not found in /root/reth-node-builder/node-sources."
+    fi
+    REPO_NAME=$(basename -s .git "$RETH_SOURCE")
+fi
+
 
 echo "Starting installation process..."
 

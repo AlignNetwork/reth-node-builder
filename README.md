@@ -27,9 +27,7 @@ This repo offers a shell script to deploy a **Reth node as well as Reth Exex's**
 
 ## Start Here
 
-Note: Specific to Hetzner dedicated servers
-
-Choose 1a or 1b
+> Note: Specific to Hetzner dedicated servers
 
 ### 0. Install the Repo
 
@@ -38,6 +36,7 @@ Choose 1a or 1b
 3. (optional) to use moonsnap `-m` place your `MOONSNAP_KEY` in the `.env` from [here](https://github.com/crebsy/moonsnap-downloadoor)
 4. `cd reth-node-builder`
 5. `chmod +x ./setup.sh`
+6. Choose 1a or 1b
 
 ### 1a. Setup a full Node
 
