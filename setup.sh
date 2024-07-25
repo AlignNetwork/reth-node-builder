@@ -162,6 +162,7 @@ install_reth() {
         echo "Installing Reth..."
         cargo install --locked --path bin/reth --bin reth
       fi
+    fi
   elif [[ "$RETH_SOURCE" == http* ]]; then
     echo "Installing Modified Reth from $RETH_SOURCE"
     # GitHub ExEx repo
