@@ -48,11 +48,11 @@ setup_services() {
     reth_exec_path="/root/.cargo/bin/reth"
   elif [[ "$RETH_SOURCE" == http* ]]; then
     REPO_NAME=$(basename -s .git "$RETH_SOURCE")
-    reth_exec_path="cargo run --bin remote-exex --release --"
+    reth_exec_path="cargo run --bin exex --release --"
     reth_working_dir="WorkingDirectory=/root/reth-node-builder/node-sources/$REPO_NAME"
   else
     # Local folder
-    reth_exec_path="cargo run --bin remote-exex --release --"
+    reth_exec_path="cargo run --bin exex --release --"
     reth_working_dir="WorkingDirectory=/root/reth-node-builder/node-sources/$RETH_SOURCE"
   fi
 

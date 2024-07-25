@@ -29,6 +29,34 @@ This repo offers a shell script to deploy a **Reth node as well as Reth Exex's**
 
 > Note: Specific to Hetzner dedicated servers
 
+### Prep your ExEx
+
+If you follow the [Reth examples repo](https://github.com/paradigmxyz/reth-exex-examples/tree/main)
+
+1. top level `Cargo.toml`
+
+```
+
+[workspace]
+members = [
+  "exex",
+  "mock_cl",
+]
+
+```
+
+2. ExEx Folder
+
+```
+
+[[bin]]
+name = "exex"
+path = "bin/exex.rs"
+
+```
+
+This setup should work because the script will find the bin named exex, another release may make this configurable
+
 ### 0. Install the Repo
 
 1. ssh into your instance
