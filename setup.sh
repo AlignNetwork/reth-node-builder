@@ -151,14 +151,17 @@ install_reth() {
     # Default Paradigm Reth repo
     cd /root/reth-node-builder/node-sources
   if [ "$RETH_SOURCE" = "https://github.com/paradigmxyz/reth" ]; then
-    if [ -d "reth" ]; then
-      echo "✅ Reth folder already exists. Updating..."
+    if command_exists reth; then
+      echo "✅ Reth already installed."
     else
-      git clone https://github.com/paradigmxyz/reth
-      cd reth
-      echo "Installing Reth..."
-      cargo install --locked --path bin/reth --bin reth
-    fi
+      if [ -d "reth" ]; then
+        echo "✅ Reth folder already exists"
+      else
+        git clone https://github.com/paradigmxyz/reth
+        cd reth
+        echo "Installing Reth..."
+        cargo install --locked --path bin/reth --bin reth
+      fi
   elif [[ "$RETH_SOURCE" == http* ]]; then
     echo "Installing Modified Reth from $RETH_SOURCE"
     # GitHub ExEx repo
