@@ -37,7 +37,7 @@ EOF
 }
 
 setup_services() {
-  local services_dir="/root/reth-node-setup/services/$NETWORK_NAME"
+  local services_dir="/root/reth-node-builder/services/$NETWORK_NAME"
   mkdir -p "$services_dir"
 
   # Determine Reth execution path and working directory based on RETH_SOURCE
@@ -49,11 +49,11 @@ setup_services() {
   elif [[ "$RETH_SOURCE" == http* ]]; then
     REPO_NAME=$(basename -s .git "$RETH_SOURCE")
     reth_exec_path="cargo run --bin remote-exex --release --"
-    reth_working_dir="WorkingDirectory=/root/reth-node-setup/node-sources/$REPO_NAME"
+    reth_working_dir="WorkingDirectory=/root/reth-node-builder/node-sources/$REPO_NAME"
   else
     # Local folder
     reth_exec_path="cargo run --bin remote-exex --release --"
-    reth_working_dir="WorkingDirectory=/root/reth-node-setup/node-sources/$RETH_SOURCE"
+    reth_working_dir="WorkingDirectory=/root/reth-node-builder/node-sources/$RETH_SOURCE"
   fi
 
   # Create Reth service file
@@ -149,7 +149,7 @@ install_reth() {
   run_command apt-get install -y libclang-dev pkg-config build-essential
   echo "Dependencies installed."
     # Default Paradigm Reth repo
-    cd /root/reth-node-setup/node-sources
+    cd /root/reth-node-builder/node-sources
   if [ "$RETH_SOURCE" = "https://github.com/paradigmxyz/reth" ]; then
     if [ -d "reth" ]; then
       echo "✅ Reth folder already exists. Updating..."
@@ -167,7 +167,7 @@ install_reth() {
       cd reth
       git pull
     else
-      cd /root/reth-node-setup/node-sources
+      cd /root/reth-node-builder/node-sources
       REPO_NAME=$(basename -s .git "$RETH_SOURCE")
       git clone "$RETH_SOURCE" "$REPO_NAME"
       cd "$REPO_NAME"
@@ -175,12 +175,12 @@ install_reth() {
   else
     echo "Installing Modified Reth from $RETH_SOURCE"
     # Local ExEx folder
-    cd /root/reth-node-setup/node-sources
+    cd /root/reth-node-builder/node-sources
     if [ -d "$RETH_SOURCE" ]; then
       cd "$RETH_SOURCE"
     else
-      echo "ℹ️ Folder '$RETH_SOURCE' not found in /root/reth-node-setup/node-sources."
-      mkdir -p /root/reth-node-setup/node-sources/"$NETWORK_NAME"
+      echo "ℹ️ Folder '$RETH_SOURCE' not found in /root/reth-node-builder/node-sources."
+      mkdir -p /root/reth-node-builder/node-sources/"$NETWORK_NAME"
     fi
   fi
   echo "✅ Reth installation completed."
@@ -193,9 +193,9 @@ install_lighthouse() {
     run_command apt-get install -y git gcc g++ make cmake llvm-dev clang
     echo "Dependencies installed."
     echo "Cloning Lighthouse repository..."
-    cd /root/reth-node-setup/node-sources
+    cd /root/reth-node-builder/node-sources
     git clone https://github.com/sigp/lighthouse.git
-    cd /root/reth-node-setup/node-sources/lighthouse
+    cd /root/reth-node-builder/node-sources/lighthouse
     git checkout stable
     echo "Building Lighthouse..."
     run_command make
@@ -217,7 +217,7 @@ generate_jwt() {
 # Setup service file
 setup_service() {
     local service_name=$1
-    local service_file="/root/reth-node-setup/services/${NETWORK_NAME}/${service_name}.service"
+    local service_file="/root/reth-node-builder/services/${NETWORK_NAME}/${service_name}.service"
     
     local service_path="/etc/systemd/system/${service_name}-${NETWORK_NAME}.service"
 
@@ -245,7 +245,7 @@ setup_moonsnap() {
     chmod +x /usr/local/bin/moonsnap
     
     # Source the environment file
-    source /root/reth-node-setup/.env
+    source /root/reth-node-builder/.env
     
     if [ -z "$MOONSNAP_KEY" ]; then
         echo "Error: MOONSNAP_KEY not found in environment file, get one from https://github.com/crebsy/moonsnap-downloadoor/tree/main"
@@ -299,7 +299,7 @@ Directory Structure:
 ├── node
 │   ├── reth (reth data)
 │   └── secret (jwt secret)
-├── reth-node-setup (this script home directory)
+├── reth-node-builder (this script home directory)
 │   ├── node-sources (reth and lighthouse source code)
 │   ├── services (your network services. This is where you put the run commands (reth node etc))
 │   ├── .env (Moonsnap environment file)
@@ -332,31 +332,31 @@ example_cmds() {
 Example commands for using this script:
 
 1. Install a full node for mainnet:
-   ./node_setup.sh -n mainnet
+   setup.sh -n mainnet
 
 2. Install a full node for mainnet with moonsnap:
-   ./node_setup.sh -s -n mainnet -m
+   setup.sh -s -n mainnet -m
 
 3. Install a full node for Holesky testnet:
-   ./node_setup.sh -s -n holesky
+   setup.sh -s -n holesky
 
 4. Install ExEx for holesky testnet:
-   ./node_setup.sh -s https://github.com/AlignNetwork/blobster.git -n holesky
+   setup.sh -s https://github.com/AlignNetwork/blobster.git -n holesky
 
 5. Install ExEx for mainnet:
-   ./node_setup.sh -s https://github.com/AlignNetwork/blobster.git -n mainnet
+   setup.sh -s https://github.com/AlignNetwork/blobster.git -n mainnet
 
 6. Install ExEx for mainnet with moonsnap:
-   ./node_setup.sh -s https://github.com/AlignNetwork/blobster.git -n mainnet -m
+   setup.sh -s https://github.com/AlignNetwork/blobster.git -n mainnet -m
 
 7. Install ExEx from local:
-   ./node_setup.sh -s blobster-local -n holesky -m
+   setup.sh -s blobster-local -n holesky -m
 
 8. Show this help message:
-   ./node_setup.sh -h
+   setup.sh -h
 
 9. Run any command in verbose mode by adding -v, for example:
-   ./node_setup.sh -v -f -n holesky
+   setup.sh -v -f -n holesky
 
 EOF
 }
