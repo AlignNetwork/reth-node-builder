@@ -31,34 +31,6 @@ This repo offers a shell script to deploy a **Reth node as well as Reth Exex's**
 
 > Note: Specific to Hetzner dedicated servers
 
-### 0. Prep your ExEx
-
-If you follow the [Reth examples repo](https://github.com/paradigmxyz/reth-exex-examples/tree/main)
-
-1. top level `Cargo.toml`
-
-```
-
-[workspace]
-members = [
-  "exex",
-  "mock_cl",
-]
-
-```
-
-2. ExEx Folder
-
-```
-
-[[bin]]
-name = "exex"
-path = "bin/exex.rs"
-
-```
-
-This setup should work because the script will find the bin named `exex`, another release may make this configurable
-
 ### 1. Install the Repo
 
 1. ssh into your server
@@ -75,7 +47,9 @@ This setup should work because the script will find the bin named `exex`, anothe
 - Installs a Reth Node, Lighthouse CL Node and sets up system d services with moonsnap
 
 ### 2b.Setup a Full Node with an ExEx
+ Refer to [Format ExEx](#format-exex) to setup your ExEx Repo
 
+ 
 `setup.sh -s https://github.com/AlignNetwork/blobster.git -m`
 
 - `-s` option is the source of the reth ExEx
@@ -105,6 +79,33 @@ Directory Structure:
 │ ├── .env (Moonsnap environment file)
 │ └── node_setup.sh (this script)
 └── ...
+
+```
+
+### Format ExEx
+
+This setup should work because the script will find the bin named `exex`, another release may make this configurable.
+If you follow the [Reth examples repo](https://github.com/paradigmxyz/reth-exex-examples/tree/main)
+
+1. top level `Cargo.toml`
+
+```
+
+[workspace]
+members = [
+  "exex",
+  "mock_cl",
+]
+
+```
+
+2. ExEx Folder
+
+```
+
+[[bin]]
+name = "exex"
+path = "bin/exex.rs"
 
 ```
 
