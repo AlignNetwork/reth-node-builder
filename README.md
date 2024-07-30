@@ -109,6 +109,18 @@ path = "bin/exex.rs"
 
 ```
 
+### Prometheus and Grafana
+
+References:
+
+Reth:
+https://reth.rs/run/observability.html?highlight=metrics#conclusion
+
+Lighthouse:
+https://github.com/sigp/lighthouse-metrics/tree/master
+https://lighthouse-book.sigmaprime.io/advanced_metrics.html
+
+
 ### Hosting / ssh
 
 I tested this stack on:
@@ -117,6 +129,9 @@ I tested this stack on:
 
 > [!TIP]
 > I selected Ubunutu 22 base on creation of instance, also added an ssh key with `ssh-keygen -t ed25519 -C "<Email>"`
+
+
+
 
 ### Notes:
 
