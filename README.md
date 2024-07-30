@@ -63,6 +63,19 @@ If the script ran successfully you should be able to run:
 - `journalctl -u reth-<repo_name>-<network> -f` - Logs of Reth
 - `journalctl -u lighthouse-<repo_name>-<network> -f`- Logs of Lighthouse
 
+### Prometheus and Grafana
+
+Prometheus: `http://localhost:9090`
+> [!Note]
+> ensure reth and lighthouse are `UP`
+
+### Grafana
+Import Dashboards
+
+Reth: https://github.com/paradigmxyz/reth/tree/main/etc/grafana/dashboards
+
+Lighthouse:[ https://github.com/sigp/lighthouse-metrics/tree/master](https://github.com/sigp/lighthouse-metrics/tree/master/dashboards)
+
 ### Directory Structure:
 
 The setup exists in reth-node-setup and the node data exists in /root/node
@@ -108,18 +121,6 @@ name = "exex"
 path = "bin/exex.rs"
 
 ```
-
-### Prometheus and Grafana
-
-References:
-
-Reth:
-https://reth.rs/run/observability.html?highlight=metrics#conclusion
-
-Lighthouse:
-https://github.com/sigp/lighthouse-metrics/tree/master
-https://lighthouse-book.sigmaprime.io/advanced_metrics.html
-
 
 ### Hosting / ssh
 
