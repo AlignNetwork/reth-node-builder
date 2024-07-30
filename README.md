@@ -63,13 +63,16 @@ If the script ran successfully you should be able to run:
 - `journalctl -u reth-<repo_name>-<network> -f` - Logs of Reth
 - `journalctl -u lighthouse-<repo_name>-<network> -f`- Logs of Lighthouse
 
-### Prometheus and Grafana
+### 4. Prometheus and Grafana
 
-Prometheus: `http://localhost:9090`
+#### Prometheus: `http://localhost:9090`
 > [!Note]
 > ensure reth and lighthouse are `UP`
 
-### Grafana
+#### Grafana
+`http://localhost:3000` admin/admin
+
+
 Import Dashboards
 
 Reth: https://github.com/paradigmxyz/reth/tree/main/etc/grafana/dashboards
