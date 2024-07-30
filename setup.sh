@@ -66,7 +66,7 @@ setup_services() {
             Type=simple
             User=root
             $reth_working_dir
-            ExecStart=$reth_exec_path node --network $NETWORK_NAME --full --datadir /root/node/reth --authrpc.jwtsecret /root/node/secret/jwt.hex --http --http.api all
+            ExecStart=$reth_exec_path node --chain $NETWORK_NAME --full --datadir /root/node/reth --authrpc.jwtsecret /root/node/secret/jwt.hex --http --http.api all
             Restart=on-failure
             RestartSec=5
 
