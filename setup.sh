@@ -261,6 +261,81 @@ setup_moonsnap() {
     echo "Moonsnap download complete."
 }
 
+# Function to install and configure Prometheus for Reth
+install_prometheus() {
+    echo "Installing Prometheus..."
+    PROMETHEUS_VERSION="2.54.0-rc.0"
+    wget https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz
+    tar xvfz prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz
+    #mv prometheus-${PROMETHEUS_VERSION}.linux-amd64 /opt/prometheus
+    #rm prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz
+
+
+    # Create Reth-specific Prometheus configuration
+    cat > /etc/prometheus/prometheus.yml << EOF
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'reth'
+    static_configs:
+      - targets: ['localhost:9001']
+  - job_name: 'lighthouse_beacon'
+    static_configs:
+      - targets: ['localhost:5054']
+EOF
+
+
+    # Create systemd service file for Prometheus
+    cat > /etc/systemd/system/prometheus.service << EOF
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # Reload systemd and start Prometheus
+    systemctl daemon-reload
+    systemctl start prometheus
+    systemctl enable prometheus
+
+    echo "✅ Prometheus installation and configuration for Reth completed."
+}
+
+# Function to install and configure Grafana for Reth
+install_grafana() {
+    echo "Installing Grafana..."
+    apt-get update
+    apt-get install -y software-properties-common wget
+    wget -q -O - https://packages.grafana.com/gpg.key | apt-key add -
+    echo "deb https://packages.grafana.com/oss/deb stable main" | tee -a /etc/apt/sources.list.d/grafana.list
+    apt-get update
+    apt-get install -y grafana
+
+    # Start Grafana service
+    systemctl start grafana-server
+    systemctl enable grafana-server
+
+    echo "✅ Grafana installation and configuration for Reth completed."
+}
+
 
 
 show_completion_message() {
@@ -425,6 +500,9 @@ fi
 
 generate_jwt
 setup_services
+
+install_prometheus
+install_grafana
 
 # Setup Moonsnap if requested
 if [ "$USE_MOONSNAP" = true ]; then
